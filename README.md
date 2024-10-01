@@ -1,1 +1,2 @@
 # SWD392_Project_G2
+Meraki is a website that helps guests book badminton courts. The system will allow users to register an account to become customers and purchase badminton court subscription packages, such as monthly or daily packages. After booking the court, users will proceed to make a deposit payment, and upon arriving at the court on time, they will check in with the staff and can enter the court to play badminton.
