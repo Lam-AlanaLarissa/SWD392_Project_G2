@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Models.DTO;
 using System.Diagnostics;
 
 namespace SWD392_Meraki_Web.Controllers
