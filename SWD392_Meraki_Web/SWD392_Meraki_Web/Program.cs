@@ -1,5 +1,17 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Authentication.Cookies;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(p =>
+{
+    p.LoginPath = "/auth/login";
+
+})
+.AddGoogle(p =>
+{
+    p.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new Exception("Not found ClientId");
+    p.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new Exception("Not found ClientSecret");
+});
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
