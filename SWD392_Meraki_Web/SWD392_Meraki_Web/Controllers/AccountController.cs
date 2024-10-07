@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SWD392_Meraki_Web.Controllers
@@ -78,6 +80,23 @@ namespace SWD392_Meraki_Web.Controllers
             {
                 return View();
             }
+        }
+
+        public IActionResult GoogleLogin(string? returnUrl)
+        {
+            string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
+            var properties = new AuthenticationProperties { RedirectUri = url };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        public async Task<IActionResult> GoogleResponse(string? returnUrl)
+        {
+            await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect("/");
+            }
+            return Redirect(returnUrl);
         }
     }
 }
