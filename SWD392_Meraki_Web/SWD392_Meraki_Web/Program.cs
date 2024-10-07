@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddCookie(p =>
 {
-    p.LoginPath = "/auth/login";
+    p.LoginPath = "/account/login";
 
 })
 .AddGoogle(p =>
