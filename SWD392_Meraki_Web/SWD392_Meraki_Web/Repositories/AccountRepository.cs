@@ -21,6 +21,7 @@ namespace SWD392_Meraki_Web.Repositories
                 .SingleOrDefault(p => p.Username == obj.Username && p.Password == obj.Password);
         }
 
+
         public User GetUserById(string userId)
         {
             return _context.Users.Find(userId);
@@ -41,5 +42,6 @@ namespace SWD392_Meraki_Web.Repositories
                 }
             }
         }
+
     }
 }
