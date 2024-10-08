@@ -1,18 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
     public class CourtController : Controller
     {
+        private readonly ICourtRepository _courtRepository;
+        public CourtController(ICourtRepository courtRepository)
+        {
+            _courtRepository = courtRepository;
+        }
         // GET: CourtController
         public ActionResult Index()
         {
-            return View();
+            var courts = _courtRepository.GetCourts();
+
+            return View(courts);
         }
 
-        // GET: CourtController/Details/5
-        public ActionResult Details(int id)
+            // GET: CourtController/Details/5
+            public ActionResult Details(int id)
         {
             return View();
         }

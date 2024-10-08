@@ -1,10 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Repositories;
+using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IAccountRepository _accountRepository;
+        public AccountController(IAccountRepository accountRepository)
+        {
+            _accountRepository = accountRepository;
+        }
         // GET: AccountController
         public ActionResult Index()
         {
@@ -39,24 +47,42 @@ namespace SWD392_Meraki_Web.Controllers
         }
 
         // GET: AccountController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Edit(string id)
         {
-            return View();
+            var user = _accountRepository.GetUserById(id);
+            if (user == null)
+            {
+                TempData["Msg"] = "Failure!";
+            }
+
+            return View(user);
         }
 
         // POST: AccountController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(string id, User updatedUser)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var user = _accountRepository.GetUserById(id);
+                if (user == null)
+                {
+                    TempData["Msg"] = "Failure!";
+                }
+
+                // Only update the allowed fields
+                user.Username = updatedUser.Username;
+                user.Gender = updatedUser.Gender;
+                user.Address = updatedUser.Address;
+                user.Birthday = updatedUser.Birthday;
+
+                _accountRepository.UpdateUser(user);
+                return RedirectToAction("ViewProfile", new { id = user.UserId });
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(updatedUser);
         }
 
         // GET: AccountController/Delete/5
