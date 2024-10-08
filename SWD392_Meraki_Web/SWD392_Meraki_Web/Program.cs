@@ -12,6 +12,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/auth/login"; // Đường dẫn khi người dùng chưa đăng nhập
         options.LogoutPath = "/auth/logout"; // Đường dẫn logout
+        options.SlidingExpiration = true;
     });
 /*.AddGoogle(p =>
  {
