@@ -45,6 +45,25 @@
                         opacity: 0.8; /* Slight effect when hovering */
                     }
             </style>
+            <li style="list-style : none" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Thông tin người dùng
+                </a>
+                <ul class="dropdown-menu">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li><a class="dropdown-item" href="/account">@User.Identity.Name</a></li>
+                        <li><a class="dropdown-item" href="/account/logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a class="dropdown-item" href="/account/login">Login</a></li>
+                        <li><a class="dropdown-item" href="/account/register">Register</a></li>
+                    }
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>
             <!-- HTML button -->
             <a href="/account/googlelogin?returnUrl=@Context.Request.Query["ReturnUrl"]" class="google-login-btn"></a>
         </nav>
