@@ -3,11 +3,19 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
+using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
     public class AccountController : Controller
     {
+        public AccountController(IAccountRepository accountRepository)
+        {
+            _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+        }
+        private readonly IAccountRepository _accountRepository;
         // GET: AccountController
         public ActionResult Index()
         {
@@ -83,16 +91,48 @@ namespace SWD392_Meraki_Web.Controllers
             }
         }
 
-        public IActionResult GoogleLogin(string? returnUrl)
-        {
-            string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
-            var properties = new AuthenticationProperties { RedirectUri = url };
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-        }
+      /*  public IActionResult GoogleLogin(string? returnUrl)
+          {
+              string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
+              var properties = new AuthenticationProperties { RedirectUri = url };
+              return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+          }
 
         public async Task<IActionResult> GoogleResponse(string? returnUrl)
         {
             await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect("/");
+            }
+            return Redirect(returnUrl);
+        }*/
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginModel obj, string? returnUrl)
+        {
+            User? user = _accountRepository.GetUser(obj);
+            if (user is null)
+            {
+                ModelState.AddModelError("Error", "Login Failed");
+                return View(obj);
+            }
+            List<Claim> list = new List<Claim>{
+                new Claim (ClaimTypes.NameIdentifier, user.UserId),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim (ClaimTypes.Email, user.Email),
+            };
+            AuthenticationProperties properties = new AuthenticationProperties
+            {
+                IsPersistent = obj.Remember
+            };
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(list, CookieAuthenticationDefaults.AuthenticationScheme));
+            await HttpContext.SignInAsync(principal, properties);
             if (string.IsNullOrEmpty(returnUrl))
             {
                 return Redirect("/");
