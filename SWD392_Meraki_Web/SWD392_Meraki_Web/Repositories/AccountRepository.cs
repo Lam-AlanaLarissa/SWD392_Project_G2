@@ -22,7 +22,7 @@ namespace SWD392_Meraki_Web.Repositories
         public User? GetUser(User obj)
         {
             return _context.Users
-                .SingleOrDefault(p => p.Username == obj.Username && p.Password == obj.Password);
+                .SingleOrDefault(p => p.Email == obj.Email && p.Password == obj.Password);
         }
 
 
