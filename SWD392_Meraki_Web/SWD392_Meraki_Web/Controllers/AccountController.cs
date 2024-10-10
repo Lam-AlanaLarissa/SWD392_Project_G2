@@ -175,5 +175,14 @@ namespace SWD392_Meraki_Web.Controllers
             }
             return Redirect(returnUrl);
         }
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            // Đăng xuất người dùng (SignOut)
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Chuyển hướng người dùng về trang đăng nhập
+            return RedirectToAction("Login", "Account");
+        }
     }
 }
