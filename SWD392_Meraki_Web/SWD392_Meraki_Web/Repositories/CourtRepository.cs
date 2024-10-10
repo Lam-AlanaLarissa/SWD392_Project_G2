@@ -31,6 +31,18 @@ namespace SWD392_Meraki_Web.Repositories
 
             return courts.ToList();
         }
+
+        public int DeleteCourt(string id)
+        {
+            // Tìm court theo ID trước khi xóa
+            var court = _context.Courts.Find(id);
+            if (court != null)
+            {
+                _context.Courts.Remove(court);
+                return _context.SaveChanges(); // Trả về số lượng bản ghi đã bị xóa
+            }
+            return 0; // Không có bản ghi nào bị xóa
+        }
     }
 }
 

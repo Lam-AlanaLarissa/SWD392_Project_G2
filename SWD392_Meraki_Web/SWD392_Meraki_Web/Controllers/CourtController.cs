@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Repositories;
 using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
@@ -18,9 +20,8 @@ namespace SWD392_Meraki_Web.Controllers
 
             return View(courts);
         }
-
-            // GET: CourtController/Details/5
-            public ActionResult Details(int id)
+        // GET: CourtController/Details/5
+        public ActionResult Details(int id)
         {
             return View();
         }
@@ -67,25 +68,23 @@ namespace SWD392_Meraki_Web.Controllers
             }
         }
 
-        // GET: CourtController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CourtController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public IActionResult DeleteCourt(string id)
         {
-            try
+            // Kiểm tra nếu ID không hợp lệ
+            if (string.IsNullOrEmpty(id))
             {
-                return RedirectToAction(nameof(Index));
+                return BadRequest("ID cannot be null or empty.");
             }
-            catch
+
+            // Gọi phương thức xóa từ repository
+            int ret = _courtRepository.DeleteCourt(id);
+            if (ret > 0)
             {
-                return View();
+                return RedirectToAction("Index"); // Chuyển hướng về danh sách
             }
+
+            return RedirectToAction("Error"); // Chuyển hướng đến trang lỗi
         }
     }
 }
