@@ -9,13 +9,17 @@ namespace SWD392_Meraki_Web.Repositories
     {
         private readonly BookingBadmintonContext _context; // Replace with your actual DbContext name
 
+        public AccountRepository()
+        {
+        }
+
         // Constructor to inject the dependency
         public AccountRepository(BookingBadmintonContext context)
         {
             _context = context;
         }
 
-        public User? GetUser(LoginModel obj)
+        public User? GetUser(User obj)
         {
             return _context.Users
                 .SingleOrDefault(p => p.Username == obj.Username && p.Password == obj.Password);

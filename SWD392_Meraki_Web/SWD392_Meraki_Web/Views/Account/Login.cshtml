@@ -1,19 +1,51 @@
-﻿@model LoginModel
+﻿@model User
+
 <div asp-validation-summary="All"></div>
 <form method="post">
     <div>
         <label asp-for="Username">Username</label>
         <div>
-            <input type="username" asp-for="Username">
+            <input type="text" asp-for="Username" readonly>
         </div>
     </div>
-    <div>
-        <label asp-for="Password">Password</label>
-        <div>
-            <input type="password" asp-for="Password">
-        </div>
-    </div>
-    <button>Login</button>
-    <a href="/auth/googlelogin?returnUrl=@Context.Request.Query["ReturnUrl"]">Google Login</a>
-</form>
 
+    <div>
+        <label asp-for="Email">Email</label>
+        <div>
+            <input type="email" asp-for="Email" readonly>
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="PhoneNumber">Phone Number</label>
+        <div>
+            <input type="text" asp-for="PhoneNumber">
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="Gender">Gender</label>
+        <div>
+            <select asp-for="Gender">
+                <input type="text" asp-for="Gender">
+   
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="Address">Address</label>
+        <div>
+            <input type="text" asp-for="Address">
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="Birthday">Birthday</label>
+        <div>
+            <input type="date" asp-for="Birthday">
+        </div>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
