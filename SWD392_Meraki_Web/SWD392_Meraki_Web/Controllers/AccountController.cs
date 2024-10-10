@@ -18,7 +18,7 @@ namespace SWD392_Meraki_Web.Controllers
         {
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
         }
-  
+
 
         // GET: AccountController
         public ActionResult Index()
@@ -53,16 +53,28 @@ namespace SWD392_Meraki_Web.Controllers
             }
         }
 
-        // GET: AccountController/Edit/5
         [HttpGet]
-        public ActionResult Edit(string id)
+        public IActionResult Edit()
         {
-            var user = _accountRepository.GetUserById(id);
-            if (user == null)
+            // Lấy thông tin UserId từ claims
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
             {
-                TempData["Msg"] = "Failure!";
+                TempData["Msg"] = "User is not logged in!";
+                return RedirectToAction("Login", "Account");  // Hoặc chuyển hướng đến login nếu không có UserId
             }
 
+            // Lấy thông tin người dùng từ cơ sở dữ liệu
+            User user = _accountRepository.GetUserById(userId);
+
+            if (user == null)
+            {
+                TempData["Msg"] = "User not found!";
+                return View();
+            }
+
+            // Trả về view với dữ liệu người dùng
             return View(user);
         }
 
@@ -113,22 +125,22 @@ namespace SWD392_Meraki_Web.Controllers
             }
         }
 
-      /*  public IActionResult GoogleLogin(string? returnUrl)
-          {
-              string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
-              var properties = new AuthenticationProperties { RedirectUri = url };
-              return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-          }
-
-        public async Task<IActionResult> GoogleResponse(string? returnUrl)
-        {
-            await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (string.IsNullOrEmpty(returnUrl))
+        /*  public IActionResult GoogleLogin(string? returnUrl)
             {
-                return Redirect("/");
+                string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
+                var properties = new AuthenticationProperties { RedirectUri = url };
+                return Challenge(properties, GoogleDefaults.AuthenticationScheme);
             }
-            return Redirect(returnUrl);
-        }*/
+
+          public async Task<IActionResult> GoogleResponse(string? returnUrl)
+          {
+              await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+              if (string.IsNullOrEmpty(returnUrl))
+              {
+                  return Redirect("/");
+              }
+              return Redirect(returnUrl);
+          }*/
         [HttpGet]
         public IActionResult Login()
         {
@@ -136,7 +148,7 @@ namespace SWD392_Meraki_Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel obj, string? returnUrl)
+        public async Task<IActionResult> Login(User obj, string? returnUrl)
         {
             User? user = _accountRepository.GetUser(obj);
             if (user is null)
@@ -144,17 +156,19 @@ namespace SWD392_Meraki_Web.Controllers
                 ModelState.AddModelError("Error", "Login Failed");
                 return View(obj);
             }
-            List<Claim> list = new List<Claim>{
-                new Claim (ClaimTypes.NameIdentifier, user.UserId),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim (ClaimTypes.Email, user.Email),
-            };
-            AuthenticationProperties properties = new AuthenticationProperties
-            {
-                IsPersistent = obj.Remember
-            };
+            List<Claim> list = new List<Claim> {
+    new Claim(ClaimTypes.NameIdentifier, user.UserId),
+    new Claim(ClaimTypes.Name, user.Username),
+    new Claim(ClaimTypes.Email, user.Email ?? ""),
+    // Các claims tùy chỉnh phải có tên tùy chỉnh
+    new Claim("Gender", user.Gender?.ToString() ?? ""),
+    new Claim("PhoneNumber", user.PhoneNumber ?? ""),
+    new Claim("Address", user.Address ?? ""),
+    new Claim("Birthday", user.Birthday?.ToString() ?? ""),
+};
+
             var principal = new ClaimsPrincipal(new ClaimsIdentity(list, CookieAuthenticationDefaults.AuthenticationScheme));
-            await HttpContext.SignInAsync(principal, properties);
+            await HttpContext.SignInAsync(principal);
             if (string.IsNullOrEmpty(returnUrl))
             {
                 return Redirect("/");
