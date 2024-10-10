@@ -53,7 +53,12 @@
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <li><a class="dropdown-item" href="/account/edit">@User.Identity.Name</a></li>
-                        <li><a class="dropdown-item" href="/account/logout">Logout</a></li>
+                        <li>
+                            <form id="logoutForm" method="post" action="/account/logout" style="display: none;">
+                                @Html.AntiForgeryToken()  <!-- Để bảo vệ CSRF -->
+                            </form>
+                            <a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                        </li>
                     }
                     else
                     {
