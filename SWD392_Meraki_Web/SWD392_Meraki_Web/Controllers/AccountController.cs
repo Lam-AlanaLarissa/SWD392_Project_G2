@@ -56,16 +56,13 @@ namespace SWD392_Meraki_Web.Controllers
         [HttpGet]
         public IActionResult Edit()
         {
-            // Lấy thông tin UserId từ claims
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
             {
                 TempData["Msg"] = "User is not logged in!";
-                return RedirectToAction("Login", "Account");  // Hoặc chuyển hướng đến login nếu không có UserId
+                return RedirectToAction("Login", "Account");
             }
-
-            // Lấy thông tin người dùng từ cơ sở dữ liệu
             User user = _accountRepository.GetUserById(userId);
 
             if (user == null)
@@ -73,56 +70,39 @@ namespace SWD392_Meraki_Web.Controllers
                 TempData["Msg"] = "User not found!";
                 return View();
             }
-
-            // Trả về view với dữ liệu người dùng
             return View(user);
         }
-
-        // POST: AccountController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(string id, User updatedUser)
+        public IActionResult Edit(User updatedUser)
         {
-            if (ModelState.IsValid)
+            ModelState.Remove("UserId");
+            ModelState.Remove("Password");
+            if (!ModelState.IsValid)
             {
-                var user = _accountRepository.GetUserById(id);
-                if (user == null)
-                {
-                    TempData["Msg"] = "Failure!";
-                }
+                return View(updatedUser);
+            }
+            User oldUser = _accountRepository.GetUserByEmail(updatedUser.Email);
+            if (oldUser == null)
+            {
+                ModelState.AddModelError("", "Người dùng không tồn tại.");
+                return View(updatedUser);
+            }   
+            oldUser.Username = updatedUser.Username;
+            oldUser.PhoneNumber = updatedUser.PhoneNumber;
+            oldUser.Birthday = updatedUser.Birthday; 
+            oldUser.Address = updatedUser.Address;
 
-                // Only update the allowed fields
-                user.Username = updatedUser.Username;
-                user.Gender = updatedUser.Gender;
-                user.Address = updatedUser.Address;
-                user.Birthday = updatedUser.Birthday;
-
-                _accountRepository.UpdateUser(user);
-                return RedirectToAction("ViewProfile", new { id = user.UserId });
+            bool updateSuccess = _accountRepository.UpdateUser(oldUser);
+            if (updateSuccess)
+            {
+                TempData["Message"] = "Cập nhật thông tin cá nhân thành công!";
+            }
+            else
+            {
+                TempData["Message"] = "Cập nhật thông tin thất bại, vui lòng thử lại!";
             }
 
             return View(updatedUser);
-        }
-
-        // GET: AccountController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AccountController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         /*  public IActionResult GoogleLogin(string? returnUrl)

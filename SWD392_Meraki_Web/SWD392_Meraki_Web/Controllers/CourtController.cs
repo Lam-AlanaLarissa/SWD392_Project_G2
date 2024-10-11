@@ -81,6 +81,7 @@ namespace SWD392_Meraki_Web.Controllers
             int ret = _courtRepository.DeleteCourt(id);
             if (ret > 0)
             {
+                TempData["Message"] = "Xoá thành công!";
                 return RedirectToAction("Index"); // Chuyển hướng về danh sách
             }
 
