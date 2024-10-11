@@ -1,8 +1,27 @@
 ﻿@model User
 
-<div asp-validation-summary="All"></div>
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<h2>Edit Profile</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+@if (TempData["Message"] != null)
+{
+    <div id="tempDataMessage" class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
 <form method="post">
-    
+    <div>
+        <label asp-for="Email">Email</label>
+        <div>
+            <input type="email" asp-for="Email" readonly />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
     <div>
         <label asp-for="Username">Username</label>
         <div>
@@ -20,7 +39,7 @@
         <label asp-for="Gender">Gender</label>
         <div>
             <input type="text" asp-for="Gender">
-        </div>z
+        </div>
     </div>
 
     <div>
@@ -39,3 +58,15 @@
 
     <button type="submit">Save</button>
 </form>
+<!-- Thêm mã JavaScript để ẩn thông báo sau 5 giây -->
+<script src="/js/jquery-3.7.1.js"></script>
+<script>
+    window.onload = function () {
+        var messageDiv = document.getElementById("tempDataMessage");
+        if (messageDiv) {
+            setTimeout(function () {
+                messageDiv.style.display = "none"; // Ẩn thông báo
+            }, 1500); // Thời gian hiển thị 1.5 giây
+        }
+    };
+</script>

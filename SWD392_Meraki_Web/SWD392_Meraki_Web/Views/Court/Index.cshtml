@@ -39,17 +39,23 @@
 
                 <td>
                     <a href="/" class="text-decoration-none">
-                        <i class="bi bi-eye"></i> Details
+                        <i class="bi bi-eye"></i>
                     </a>
-                    <a class="del bi bi-trash">Delete</a>
+                    <a class="del bi bi-trash"></a>
                     <a href="/">
-                        <i class="bi bi-pencil"></i> Edit
+                        <i class="bi bi-pencil"></i>
                     </a>
                 </td>
             </tr>
 }
     </tbody>
 </table>
+@if (TempData["Message"] != null)
+{
+    <div id="tempDataMessage" class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
 <div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form asp-controller="Court" asp-action="DeleteCourt" method="post" class="modal-content">
@@ -75,4 +81,14 @@
         $('#delModal input[name="id"]').val(id);
         $('#delModal').modal('show');
     });
+</script>
+<script>
+    window.onload = function () {
+        var messageDiv = document.getElementById("tempDataMessage");
+        if (messageDiv) {
+            setTimeout(function () {
+                messageDiv.style.display = "none"; // Ẩn thông báo
+            }, 1500); // Thời gian hiển thị 1.5 giây
+        }
+    };
 </script>

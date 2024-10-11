@@ -6,8 +6,8 @@ namespace SWD392_Meraki_Web.Repositories.Interface
     {
 
         public User GetUserById(string userId);
-        public void UpdateUser(User user);
-
+        public bool UpdateUser(User user);
+        public User GetUserByEmail(string email);
         public User? GetUser(User obj);
 
     }

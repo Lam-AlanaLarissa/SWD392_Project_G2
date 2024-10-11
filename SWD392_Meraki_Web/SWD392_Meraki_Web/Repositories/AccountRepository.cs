@@ -25,25 +25,26 @@ namespace SWD392_Meraki_Web.Repositories
                 .SingleOrDefault(p => p.Email == obj.Email && p.Password == obj.Password);
         }
 
-
+        public User GetUserByEmail(string email)
+        {
+            return _context.Users.SingleOrDefault(u => u.Email.Equals(email));
+        }
         public User GetUserById(string userId)
         {
             return _context.Users.Find(userId);
         }
 
-        public void UpdateUser(User user)
+        public bool UpdateUser(User user)
         {
-            using (var context = new BookingBadmintonContext())
+            try
             {
-                var existingUser = context.Users.Find(user.UserId);
-                if (existingUser != null)
-                {
-                    existingUser.Gender = user.Gender;
-                    existingUser.Address = user.Address;
-                    existingUser.Birthday = user.Birthday;
-                    existingUser.PhoneNumber = user.PhoneNumber;
-                    context.SaveChanges();
-                }
+                _context.Users.Update(user);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
