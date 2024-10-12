@@ -14,12 +14,14 @@ namespace SWD392_Meraki_Web.Controllers
             _courtRepository = courtRepository;
         }
         // GET: CourtController
+        [HttpGet]
         public ActionResult Index()
         {
             var courts = _courtRepository.GetCourts();
 
             return View(courts);
         }
+
         // GET: CourtController/Details/5
         public ActionResult Details(int id)
         {
@@ -87,5 +89,7 @@ namespace SWD392_Meraki_Web.Controllers
 
             return RedirectToAction("Error"); // Chuyển hướng đến trang lỗi
         }
+
+
     }
 }

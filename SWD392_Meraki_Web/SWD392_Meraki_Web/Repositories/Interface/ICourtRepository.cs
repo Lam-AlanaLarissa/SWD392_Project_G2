@@ -6,5 +6,9 @@ namespace SWD392_Meraki_Web.Repositories.Interface
     {
         public List<Court> GetCourts();
         public int DeleteCourt(string id);
+        public List<Court> GetCourtForStaff();
+        public int CheckIn(string courtId);
+        public int CheckOut(string courtId);
+        public Court GetCourtById(string courtId);
     }
 }

@@ -17,7 +17,7 @@
             <th>Opening Hours</th>
             <th>Closing Hours</th>
             <th>Status</th>
-            <th>In Use</th>
+            <th>In Using</th>
             <th>CreatedAt</th>
             <th>CreatedBy</th>
             <th>Actions</th>
@@ -32,7 +32,7 @@
                 <td>@court.Location</td>
                 <td>@court.OpeningHours.ToString("hh\\:mm")</td>
                 <td>@court.ClosingHours.ToString("hh\\:mm")</td>
-                <td>@court.Status</td>
+                <td>@(court.Status == 1 ? "Active" : "Inactive")</td>
                 <td>@court.IsUsing</td>
                 <td>@court.CreateAt.ToString("yyyy-MM-dd")</td>
                 <td>@court.CreateBy</td>
