@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "CartView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model Cart
+<h1>Booking Cart</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Court Name: </th>
+            <th>Slot Number: </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>@item.CourtName</td>
+                <td>
+                    <input type="hidden" name="SlotId" value="@item.slotInCart.SlotId" />
+                    <input type="number" value="@item.slotInCart.SlotNumber" />
+                    <input type="submit" value="Change Slot"/>
+                </td>
+                <td>
+                    <form asp-action="RemoveFromCart" method="post">
+                        <input type="hidden" name="SlotId" value="@item.slotInCart.SlotId" />
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
