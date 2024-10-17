@@ -1,0 +1,43 @@
+﻿@model SWD392_Meraki_Web.Models.Cart
+
+@{
+    ViewData["Title"] = "Your Cart";
+    Layout = ".../Views/Shared/_Layout.cshtml";
+}
+
+<h1>Your Cart</h1>
+
+@if (Model.Items.Count == 0)
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Slot Number</th>
+                <th>Court Name</th>
+                <th>Location</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Slot.SlotNumber</td>
+                    <td>@item.Slot.Court.CourtName</td>
+                    <td>@item.Slot.Court.Location</td>
+                    <td>@item.Slot.SlotPrice.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Slot.SlotPrice * item.Quantity).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total: @Model.TotalPrice.ToString("C")</h3>
+}

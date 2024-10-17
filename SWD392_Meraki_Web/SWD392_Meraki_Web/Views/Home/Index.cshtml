@@ -1,8 +1,31 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<SWD392_Meraki_Web.Models.Court>
+
+@{
+    ViewData["Title"] = "Court List";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Available Courts</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Court Name</th>
+            <th>Location</th>
+            <th>Opening Hours</th>
+            <th>Closing Hours</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var court in Model)
+        {
+            <tr>
+                <td>@court.CourtName</td>
+                <td>@court.Location</td>
+                <td>@court.OpeningHours.ToString("hh\\:mm")</td>
+                <td>@court.ClosingHours.ToString("hh\\:mm")</td>
+                <td>@(court.IsUsing ? "In Use" : "Available")</td>
+            </tr>
+        }
+    </tbody>
+</table>
