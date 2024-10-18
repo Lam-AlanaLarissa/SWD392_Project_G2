@@ -11,7 +11,7 @@ namespace SWD392_Meraki_Web.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
-        private readonly IEmailSender _emailSender; // Assume you have an email service
+        private readonly IEmailSender _emailSender;
 
         public UserController(IUserRepository userRepository, UserManager<User> userManager, IEmailSender emailSender)
         {
