@@ -1,14 +1,25 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Repositories;
+using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
     public class CourtController : Controller
     {
+        private readonly ICourtRepository _courtRepository;
+        public CourtController(ICourtRepository courtRepository)
+        {
+            _courtRepository = courtRepository;
+        }
         // GET: CourtController
+        [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            var courts = _courtRepository.GetCourts();
+
+            return View(courts);
         }
 
         // GET: CourtController/Details/5
@@ -59,25 +70,26 @@ namespace SWD392_Meraki_Web.Controllers
             }
         }
 
-        // GET: CourtController/Delete/5
-        public ActionResult Delete(int id)
+        [HttpPost]
+        public IActionResult DeleteCourt(string id)
         {
-            return View();
+            // Kiểm tra nếu ID không hợp lệ
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("ID cannot be null or empty.");
+            }
+
+            // Gọi phương thức xóa từ repository
+            int ret = _courtRepository.DeleteCourt(id);
+            if (ret > 0)
+            {
+                TempData["Message"] = "Xoá thành công!";
+                return RedirectToAction("Index"); // Chuyển hướng về danh sách
+            }
+
+            return RedirectToAction("Error"); // Chuyển hướng đến trang lỗi
         }
 
-        // POST: CourtController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+
     }
 }

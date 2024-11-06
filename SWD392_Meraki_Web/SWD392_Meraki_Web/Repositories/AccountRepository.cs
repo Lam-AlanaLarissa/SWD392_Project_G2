@@ -1,8 +1,52 @@
-﻿using SWD392_Meraki_Web.Repositories.Interface;
+﻿using SWD392_Meraki_Web.Models;
+using SWD392_Meraki_Web.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
+using SWD392_Meraki_Web.DatabaseConnection; // For DbContext
 
 namespace SWD392_Meraki_Web.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
+        private readonly BookingBadmintonContext _context; // Replace with your actual DbContext name
+
+        public AccountRepository()
+        {
+        }
+
+        // Constructor to inject the dependency
+        public AccountRepository(BookingBadmintonContext context)
+        {
+            _context = context;
+        }
+
+        public User? GetUser(User obj)
+        {
+            return _context.Users
+                .SingleOrDefault(p => p.Email == obj.Email && p.Password == obj.Password);
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            return _context.Users.SingleOrDefault(u => u.Email.Equals(email));
+        }
+        public User GetUserById(string userId)
+        {
+            return _context.Users.Find(userId);
+        }
+
+        public bool UpdateUser(User user)
+        {
+            try
+            {
+                _context.Users.Update(user);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
     }
 }

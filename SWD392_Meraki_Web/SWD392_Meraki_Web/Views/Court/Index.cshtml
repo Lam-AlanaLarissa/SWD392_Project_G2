@@ -1,0 +1,94 @@
+﻿<!-- Views/Court/Index.cshtml -->
+@model IEnumerable<SWD392_Meraki_Web.Models.Court>
+
+@{
+    ViewData["Title"] = "Court List";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<h1>Court List</h1>
+
+<table class="table table-striped table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Court ID</th>
+            <th>Court Name</th>
+            <th>Location</th>
+            <th>Opening Hours</th>
+            <th>Closing Hours</th>
+            <th>Status</th>
+            <th>In Using</th>
+            <th>CreatedAt</th>
+            <th>CreatedBy</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var court in Model)
+{
+            <tr data-id="@court.CourtId">
+                <td>@court.CourtId</td>
+                <td>@court.CourtName</td>
+                <td>@court.Location</td>
+                <td>@court.OpeningHours.ToString("hh\\:mm")</td>
+                <td>@court.ClosingHours.ToString("hh\\:mm")</td>
+                <td>@(court.Status == 1 ? "Active" : "Inactive")</td>
+                <td>@court.IsUsing</td>
+                <td>@court.CreateAt.ToString("yyyy-MM-dd")</td>
+                <td>@court.CreateBy</td>
+
+                <td>
+                    <a href="/" class="text-decoration-none">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a class="del bi bi-trash"></a>
+                    <a href="/">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </td>
+            </tr>
+}
+    </tbody>
+</table>
+@if (TempData["Message"] != null)
+{
+    <div id="tempDataMessage" class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-controller="Court" asp-action="DeleteCourt" method="post" class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="delModalLabel">Do you want to delete this court?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Nhúng jQuery -->
+<script src="/js/jquery-3.7.1.js"></script>
+<script>
+    $('.del').click(function () {
+        let id = $(this).closest('tr').data('id');
+        $('#delModal input[name="id"]').val(id);
+        $('#delModal').modal('show');
+    });
+</script>
+<script>
+    window.onload = function () {
+        var messageDiv = document.getElementById("tempDataMessage");
+        if (messageDiv) {
+            setTimeout(function () {
+                messageDiv.style.display = "none"; // Ẩn thông báo
+            }, 1500); // Thời gian hiển thị 1.5 giây
+        }
+    };
+</script>

@@ -1,0 +1,19 @@
+﻿@model User
+<div asp-validation-summary="All"></div>
+<form method="post">
+    <div>
+        <label asp-for="Email">Email</label>
+        <div>
+            <input type="email" asp-for="Email">
+        </div>
+    </div>
+    <div>
+        <label asp-for="Password">Password</label>
+        <div>
+            <input type="password" asp-for="Password">
+        </div>
+    </div>
+    <button>Login</button>
+    <a href="/auth/googlelogin?returnUrl=@Context.Request.Query["ReturnUrl"]">Google Login</a>
+</form>
+
