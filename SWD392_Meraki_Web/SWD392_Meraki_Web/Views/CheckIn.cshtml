@@ -1,0 +1,23 @@
+﻿@model SWD392_Meraki_Web.Models.CheckIn
+
+<h2>Check-In</h2>
+
+<form asp-action="CheckIn" method="post">
+    <div>
+        <label for="BookingId">Booking ID:</label>
+        <input type="text" asp-for="BookingId" />
+    </div>
+    <div>
+        <label for="CheckedBy">Checked By:</label>
+        <input type="text" asp-for="CheckedBy" />
+    </div>
+    <div>
+        <label for="UserId">User ID:</label>
+        <input type="text" asp-for="UserId" />
+    </div>
+    <div>
+        <label for="CheckInTime">Check-In Time:</label>
+        <input type="datetime-local" asp-for="CheckInTime" />
+    </div>
+    <button type="submit">Check In</button>
+</form>

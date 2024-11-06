@@ -1,0 +1,27 @@
+﻿@model YourNamespace.Models.Booking
+
+<h2>Book a Court</h2>
+
+<form asp-action="BookCourt" method="post">
+    <div>
+        <label>Court ID:</label>
+        <input type="text" name="courtId" required />
+    </div>
+    <div>
+        <label>User ID:</label>
+        <input type="text" name="userId" required />
+    </div>
+    <div>
+        <label>Start Date:</label>
+        <input type="date" name="startDate" required />
+    </div>
+    <div>
+        <label>End Date:</label>
+        <input type="date" name="endDate" required />
+    </div>
+    <div>
+        <label>Slot Number:</label>
+        <input type="number" name="slotNumber" required />
+    </div>
+    <button type="submit">Book Court</button>
+</form>
