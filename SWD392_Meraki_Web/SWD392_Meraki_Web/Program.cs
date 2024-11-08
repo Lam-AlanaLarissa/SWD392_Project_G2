@@ -19,19 +19,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     p.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new Exception("Not found ClientSecret");
 });
 
-//// Cấu hình authentication cho Cookie
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
-//        options.LoginPath = "/auth/login"; // Đường dẫn khi người dùng chưa đăng nhập
-//        options.LogoutPath = "/auth/logout"; // Đường dẫn logout
-//        options.SlidingExpiration = true;
-//    });
-///*.AddGoogle(p =>
-// {
-//     p.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new Exception("Not found ClientId");
-//     p.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new Exception("Not found ClientSecret");
-// });*/
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICourtRepository, CourtRepository>();
@@ -41,6 +28,13 @@ builder.Services.AddMvc();
 
 
 builder.Services.AddDbContext<BookingBadmintonContext>(p => p.UseSqlServer(builder.Configuration.GetConnectionString("BookingBadminton")));
+builder.Services.AddDistributedMemoryCache(); // Necessary for session state
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -54,15 +48,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseHttpsRedirection();  
-app.UseStaticFiles();  
 
 app.UseRouting();
 
 app.UseSession();
 app.UseAuthorization();
 app.UseAuthentication();  
-app.UseAuthorization();   
 
 
 app.MapControllerRoute(
@@ -70,3 +61,17 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+//// Cấu hình authentication cho Cookie
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.LoginPath = "/auth/login"; // Đường dẫn khi người dùng chưa đăng nhập
+//        options.LogoutPath = "/auth/logout"; // Đường dẫn logout
+//        options.SlidingExpiration = true;
+//    });
+///*.AddGoogle(p =>
+// {
+//     p.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new Exception("Not found ClientId");
+//     p.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new Exception("Not found ClientSecret");
+// });*/
