@@ -1,10 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_Meraki_Web.Repositories;
+using SWD392_Meraki_Web.Repositories.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
     public class BookingController : Controller
     {
+        private readonly IBookingRepository _bookingRepository;
+
+        public BookingController(IBookingRepository bookingRepository)
+        {
+            _bookingRepository = bookingRepository;
+        }
+
         // GET: CartController
         public ActionResult Index()
         {
@@ -65,6 +74,7 @@ namespace SWD392_Meraki_Web.Controllers
             return View();
         }
 
+
         // POST: CartController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -78,6 +88,13 @@ namespace SWD392_Meraki_Web.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public ActionResult View()
+        {
+            var bookingPackages = _bookingRepository.GetBookingTypes();
+            return View(bookingPackages);
         }
     }
 }

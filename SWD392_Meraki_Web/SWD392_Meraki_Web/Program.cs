@@ -3,7 +3,9 @@
 using SWD392_Meraki_Web.DatabaseConnection;
 using SWD392_Meraki_Web.Repositories;
 using SWD392_Meraki_Web.Repositories.Interface;
-using Microsoft.AspNetCore.Authentication.Cookies; // Thêm namespace này
+using Microsoft.AspNetCore.Authentication.Cookies;
+using SWD392_Meraki_Web.Services.Interface;
+using SWD392_Meraki_Web.Services; // Thêm namespace này
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -22,6 +24,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICourtRepository, CourtRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpContextAccessor();  
 builder.Services.AddControllersWithViews();
 builder.Services.AddMvc();

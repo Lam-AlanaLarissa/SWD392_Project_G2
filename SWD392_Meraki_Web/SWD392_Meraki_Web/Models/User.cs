@@ -12,14 +12,15 @@ public partial class User
     [Required(ErrorMessage = "Email là bắt buộc.")]
     [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
     public string? Email { get; set; }
-
     public string Password { get; set; } = null!;
     [Required(ErrorMessage = "Giới tính là bắt buộc.")]
     public int? Gender { get; set; }
     [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
+    [Phone]
     public string? PhoneNumber { get; set; }
     [Required(ErrorMessage = "Địa chỉ là bắt buộc.")]
     public string? Address { get; set; }
+
     [Required(ErrorMessage = "Ngày sinh là bắt buộc.")]
     [DataType(DataType.Date)]
     public DateOnly? Birthday { get; set; }

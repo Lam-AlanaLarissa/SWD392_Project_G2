@@ -7,6 +7,8 @@ using SWD392_Meraki_Web.Repositories;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using SWD392_Meraki_Web.Repositories.Interface;
+using Microsoft.CodeAnalysis.Scripting;
+using SWD392_Meraki_Web.Services.Interface;
 
 namespace SWD392_Meraki_Web.Controllers
 {
@@ -14,9 +16,11 @@ namespace SWD392_Meraki_Web.Controllers
     {
 
         private readonly IAccountRepository _accountRepository;
-        public AccountController(IAccountRepository accountRepository)
+        private readonly IAccountService _accountService;
+        public AccountController(IAccountRepository accountRepository, IAccountService accountService)
         {
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            _accountService = accountService ?? throw new ArgumentNullException(nameof(_accountService));
         }
 
 
@@ -38,6 +42,7 @@ namespace SWD392_Meraki_Web.Controllers
             return View();
         }
 
+
         // POST: AccountController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -52,6 +57,8 @@ namespace SWD392_Meraki_Web.Controllers
                 return View();
             }
         }
+
+
 
         [HttpGet]
         public IActionResult Edit()
@@ -86,10 +93,10 @@ namespace SWD392_Meraki_Web.Controllers
             {
                 ModelState.AddModelError("", "Người dùng không tồn tại.");
                 return View(updatedUser);
-            }   
+            }
             oldUser.Username = updatedUser.Username;
             oldUser.PhoneNumber = updatedUser.PhoneNumber;
-            oldUser.Birthday = updatedUser.Birthday; 
+            oldUser.Birthday = updatedUser.Birthday;
             oldUser.Address = updatedUser.Address;
 
             bool updateSuccess = _accountRepository.UpdateUser(oldUser);
@@ -105,22 +112,53 @@ namespace SWD392_Meraki_Web.Controllers
             return View(updatedUser);
         }
 
-        /*  public IActionResult GoogleLogin(string? returnUrl)
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(User newUser)
+        {
+            newUser.UserId = await _accountRepository.AutoGenerateAccountId();
+
+            if (ModelState.IsValid)
             {
-                string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
-                var properties = new AuthenticationProperties { RedirectUri = url };
-                return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+                bool isRegistered = await _accountService.RegisterUserAsync(newUser);
+                if (isRegistered)
+                {
+                    // Automatically log in the user
+                    List<Claim> claims = new List<Claim>
+                {
+        new Claim("UserId", newUser.UserId),
+        new Claim(ClaimTypes.Name, newUser.Username),
+        new Claim(ClaimTypes.Email, newUser.Email ?? ""),
+        new Claim("PhoneNumber", newUser.PhoneNumber ?? ""),
+        //new Claim("Gender", newUser.Gender ?? string.Empty),
+        new Claim("Gender", newUser.Gender?.ToString() ?? string.Empty),
+        new Claim("Birthday", newUser.Birthday.HasValue ? newUser.Birthday.Value.ToString("yyyy-MM-dd") : ""),
+        new Claim("Address", newUser.Address ?? string.Empty),
+        new Claim("Role", newUser.Role.ToString()),
+                };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(claimsIdentity);
+                    await HttpContext.SignInAsync(principal);
+
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("Error", "Username or Email already exists.");
+                }
             }
 
-          public async Task<IActionResult> GoogleResponse(string? returnUrl)
-          {
-              await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-              if (string.IsNullOrEmpty(returnUrl))
-              {
-                  return Redirect("/");
-              }
-              return Redirect(returnUrl);
-          }*/
+            return View(newUser);
+        }
+        //return RedirectToAction("Index", "Home");
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -165,9 +203,26 @@ namespace SWD392_Meraki_Web.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        //public IActionResult GoogleLogin(string? returnUrl)
+        //{
+        //    string? url = Url.Action("googleresponse", "auth", new { returnUrl }, protocol: Request.Scheme);
+        //    var properties = new AuthenticationProperties { RedirectUri = url };
+        //    return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        //}
+
+        //public async Task<IActionResult> GoogleResponse(string? returnUrl)
+        //{
+        //    await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    if (string.IsNullOrEmpty(returnUrl))
+        //    {
+        //        return Redirect("/");
+        //    }
+        //    return Redirect(returnUrl);
+        //}
+
         public IActionResult GoogleLogin(string? returnUrl)
         {
-            string? url = Url.Action("googleresponse", "auth", new { returnUrl }, protocol: Request.Scheme);
+            string? url = Url.Action("googleresponse", "account", new { returnUrl }, protocol: Request.Scheme);
             var properties = new AuthenticationProperties { RedirectUri = url };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
